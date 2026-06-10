@@ -4,12 +4,14 @@
 \newif\ifcopyright
 \copyrighttrue
 \DeclareOption{nocopyright}{\copyrightfalse}
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 
 % Option to print bibliography in single spacing
 \newif\ifsinglespacebib
 \singlespacebibfalse
 \DeclareOption{singlespacebib}{\singlespacebibtrue}
+
+% Pass other options to underlying report class
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}
 
 \ProcessOptions\relax
 
@@ -33,20 +35,21 @@ bottom=1.25in,
 \else
 \fi
 
-\def\campus#1{\gdef\@campus{#1}}
-\def\degreeconferred#1{\gdef\@degreeconferred{#1}}
-\def\field#1{\gdef\@field{#1}}
-\def\dean#1{\gdef\@dean{#1}}
-\def\deantitle#1{\gdef\@deantitle{#1}}
-\def\monthconferred#1{\gdef\@monthconferred{#1}}
-\def\yearconferred#1{\gdef\@yearconferred{#1}}
+\NewDocumentCommand{\campus}{m}{\gdef\@campus{#1}}
+\NewDocumentCommand{\degreeconferred}{m}{\gdef\@degreeconferred{#1}}
+\NewDocumentCommand{\field}{m}{\gdef\@field{#1}}
+\NewDocumentCommand{\dean}{m}{\gdef\@dean{#1}}
+\NewDocumentCommand{\deantitle}{m}{\gdef\@deantitle{#1}}
+\NewDocumentCommand{\monthconferred}{m}{\gdef\@monthconferred{#1}}
+\NewDocumentCommand{\yearconferred}{m}{\gdef\@yearconferred{#1}}
 
-\newcommand{\@committeemembers}{}
-\newcommand{\committeemember}[1]{%
+\NewDocumentCommand{\@committeemembers}{}{}
+\NewDocumentCommand{\committeemember}{m}{%
 \g@addto@macro\@committeemembers{\medskip\bigskip\rule{0.5\textwidth}{0.5pt}\\#1\par} }
 
 % Title page
-\renewcommand{\maketitle}{
+\RenewDocumentCommand{\maketitle}{}{
+\hyphenpenalty=10000
 \begin{center}
 UNIVERSITY OF CALIFORNIA\\
 \expandafter\uppercase\expandafter{\@campus}
@@ -57,12 +60,11 @@ UNIVERSITY OF CALIFORNIA\\
 
 \medskip
 
-A dissertation submitted in partial satisfaction of the\\
-requirements for the degree of
+A dissertation submitted in partial satisfaction\\of the requirements for the degree of
 
 \bigskip
 
-\@degreeconferred
+{\expandafter\uppercase\expandafter{\@degreeconferred}}
 
 \bigskip
 
@@ -88,7 +90,7 @@ by
 \vfill
 \begin{flushright}
 \parbox{0.5\textwidth}{
-The Dissertation of {\@author}\\ is approved:
+The Dissertation of {\@author} is approved:
 
 \@committeemembers
 }
@@ -109,7 +111,11 @@ The Dissertation of {\@author}\\ is approved:
 \begin{center}
 Copyright \copyright{} by
 
+\bigskip
+
 \@author
+
+\bigskip
 
 \@yearconferred
 \end{center}
@@ -118,10 +124,11 @@ Copyright \copyright{} by
 \null
 \fi
 \clearpage
+\hyphenpenalty=50
 }
 
 % Abstract
-\renewenvironment{abstract}{
+\RenewDocumentEnvironment{abstract}{}{
 \addcontentsline{toc}{chapter}{Abstract}
 \begin{center}
 \textbf{Abstract}
